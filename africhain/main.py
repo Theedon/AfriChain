@@ -27,47 +27,48 @@ os.environ["TOGETHER_API_KEY"] = os.getenv("TOGETHER_API_KEY")
 os.environ["ANTHROPIC_API_KEY"] = os.getenv("ANTHROPIC_API_KEY")
 
 
+# llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+# llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.1)
+# llm = ChatMistralAI(model="mistral-large-latest")
+
+# llm = ChatOpenAI(
+#     base_url="https://api.together.xyz/v1",
+#     api_key=os.environ["TOGETHER_API_KEY"],
+#     model="mistralai/Mixtral-8x7B-Instruct-v0.1",
+# )
+
+llm = ChatAnthropic(model="claude-3-sonnet-20240229")
+
+tools = [
+    query_db,
+    search_internet,
+    get_weather,
+    get_ip_info,
+    get_pokemon_info,
+    get_movie_info,
+]
+
+agent_executor = build_agent(llm, tools)
+
+app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the Africhain API"}
+
+
+@app.post("/query")
+async def query_agent(request: QueryRequest):
+    try:
+        response = agent_executor.invoke({"input": request.query})
+        return {"response": response["output"]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+os.environ["UVICORN_RELOADER"] = "watchdog"
+
+
 def main():
-    # llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-    # llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.1)
-    # llm = ChatMistralAI(model="mistral-large-latest")
-
-    # llm = ChatOpenAI(
-    #     base_url="https://api.together.xyz/v1",
-    #     api_key=os.environ["TOGETHER_API_KEY"],
-    #     model="mistralai/Mixtral-8x7B-Instruct-v0.1",
-    # )
-
-    llm = ChatAnthropic(model="claude-3-sonnet-20240229")
-
-    tools = [
-        query_db,
-        search_internet,
-        get_weather,
-        get_ip_info,
-        get_pokemon_info,
-        get_movie_info,
-    ]
-
-    agent_executor = build_agent(llm, tools)
-
-    app = FastAPI()
-
-    @app.get("/")
-    async def root():
-        return {"message": "Welcome to the Africhain API"}
-
-    @app.post("/query")
-    async def query_agent(request: QueryRequest):
-        try:
-            response = agent_executor.invoke({"input": request.query})
-            return {"response": response["output"]}
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-    os.environ["UVICORN_RELOADER"] = "watchdog"
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
-if __name__ == "__main__":
-    main()
+    uvicorn.run("africhain.main:app", host="0.0.0.0", port=8000, reload=True)
