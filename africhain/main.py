@@ -1,13 +1,13 @@
 import os
 
-from langchain import hub
-from langchain.agents import AgentExecutor, create_tool_calling_agent
+import uvicorn
+from fastapi import FastAPI, HTTPException
 from langchain_anthropic import ChatAnthropic
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_mistralai.chat_models import ChatMistralAI
-from langchain_openai import ChatOpenAI
 
+# from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_mistralai.chat_models import ChatMistralAI
+# from langchain_openai import ChatOpenAI
+from africhain.models.QueryRequest import QueryRequest
 from africhain.tools.ip import get_ip_info
 from africhain.tools.movie import get_movie_info
 from africhain.tools.pokemon import get_pokemon_info
@@ -47,10 +47,23 @@ def main():
     ]
 
     agent_executor = build_agent(llm, tools)
-    result = agent_executor.invoke(
-        {"input": "how many employees are in the database"},
-    )
-    print(result["output"])
+
+    app = FastAPI()
+
+    @app.get("/")
+    async def root():
+        return {"message": "Welcome to the Africhain API"}
+
+    @app.post("/query")
+    async def query_agent(request: QueryRequest):
+        try:
+            response = agent_executor.invoke({"input": request.query})
+            return {"response": response["output"]}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    os.environ["UVICORN_RELOADER"] = "watchdog"
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 if __name__ == "__main__":
