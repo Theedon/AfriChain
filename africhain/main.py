@@ -11,6 +11,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import ChatOpenAI
 
+from africhain.utils.get_ip_info import get_ip_info
 from africhain.utils.get_weather import get_weather
 from africhain.utils.search_internet import search_internet
 
@@ -47,12 +48,12 @@ def main():
 
     prompt = hub.pull("hwchase17/openai-tools-agent")
 
-    tools = [search_internet, get_weather]
+    tools = [search_internet, get_weather, get_ip_info]
 
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     agent_executor.invoke(
-        {"input": "what will the weather be in lagos tomorrow"},
+        {"input": "what are the information of the ip address 102.88.68.222"},
     )
 
 
