@@ -11,10 +11,10 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import ChatOpenAI
 
-from africhain.utils.get_ip_info import get_ip_info
-from africhain.utils.get_weather import get_weather
+from africhain.utils.ip import get_ip_info
 from africhain.utils.pokemon import get_pokemon_info
-from africhain.utils.search_internet import search_internet
+from africhain.utils.weather import get_weather
+from africhain.utils.web_search import search_internet
 
 # from africhain.query_db import query_db
 
