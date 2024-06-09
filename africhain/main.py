@@ -71,4 +71,9 @@ os.environ["UVICORN_RELOADER"] = "watchdog"
 
 
 def main():
-    uvicorn.run("africhain.main:app", host="0.0.0.0", port=8000, reload=True)
+    hot_reload = True
+    if os.environ.get("APP_ENV") == "PRODUCTION":
+        hot_reload = False
+
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("africhain.main:app", host="0.0.0.0", port=port, reload=hot_reload)
