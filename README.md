@@ -1,29 +1,101 @@
-# African AI Foundation Recruitment
+Sure! Here's a markdown README file for your GitHub project:
 
-## Project Description
+# LangChain Agent for African AI Foundation Recruitment
 
-Implement a Python-based langchain agent with the following capabilities:
+This project implements a Python-based LangChain agent that utilizes various tools to provide information based on natural language queries. The agent is exposed over a single FastAPI endpoint and can be interacted with using Postman.
 
-1. **Querying a Database:** The agent should be able to query a database using the Northwind DB hosted [here](https://github.com/jpwhite3/northwind-SQLite3/blob/main/dist/northwind.db). Tools like [SQLite Viewer](https://inloop.github.io/sqlite-viewer/) or [SQLite Viewer](https://sqliteviewer.app/) can be used to view the data structure and content of the Northwind DB.
+## Features
 
-2. **Integration with Public APIs:** Integrate the agent with any public free API endpoint, such as [restful-api.dev](https://restful-api.dev/) or [7 Free Public APIs You Will Love as a Developer](https://dev.to/ruppysuppy/7-free-public-apis-you-will-love-as-a-developer-166p). Bonus points for integrating multiple APIs and including one that requires authentication.
+- **Query Database**: Queries the Northwind database.
+- **Search Internet**: Performs general internet searches.
+- **Get Weather**: Retrieves weather information.
+- **Get IP Info**: Obtains IP-related information.
+- **Get Pokémon Info**: Fetches details about Pokémon.
+- **Get Movie Info**: Retrieves movie information.
 
-The agent should expose a single FAST API endpoint allowing queries in natural language via POSTMAN. It should automatically determine the appropriate tool to engage and respond with accurate information.
+## Tools Integrated
 
-## Additional Instructions
+1. **query_db**: Queries the Northwind database.
+2. **search_internet**: Performs general internet searches.
+3. **get_weather**: Retrieves weather information.
+4. **get_ip_info**: Obtains IP-related information.
+5. **get_pokemon_info**: Fetches details about Pokémon.
+6. **get_movie_info**: Retrieves movie information.
 
-- Create a 5-minute video recording demonstrating interaction with the endpoint via POSTMAN.
-- Bonus: Share a URL to a Python service hosted on [render.com](https://render.com/) or [vercel.com](https://vercel.com/).
-- Email the Loom video URL and hosted Python service URL to recruitment@africanaifoundation.com.
-- Deadline: 10th of June, 2024.
+## FastAPI Endpoint
 
-## How to Run
+The agent is exposed over a single FastAPI endpoint where you can input a natural language query using Postman. The agent automatically selects the appropriate tool based on the query and responds with accurate information.
 
-1. Clone the repository.
-2. Set up the environment and install dependencies.
-3. Run the FastAPI server.
-4. Access the FastAPI endpoint using POSTMAN.
+### Endpoint
 
-## Contact Information
+```
+POST /query
+```
 
-For inquiries or submissions, please contact recruitment@africanaifoundation.com.
+### Request
+
+**Body**:
+
+```json
+{
+  "query": "Your natural language query here"
+}
+```
+
+### Response
+
+**Body**:
+
+```json
+{
+  "response": "The agent's response based on your query"
+}
+```
+
+## Setup and Installation
+
+1. **Clone the repository**:
+
+   ```sh
+   git clone https://github.com/Theedon/AfriChain.git
+   cd AfriChain
+   ```
+
+2. **Install dependencies**:
+   Ensure you have [Poetry](https://python-poetry.org/) installed.
+
+   ```sh
+   poetry install
+   ```
+
+3. **Set environment variables**:
+   Create a `.env` file in the root of your project and add the necessary environment variables:
+
+   ```env
+    OPENAI_API_KEY=your_openai_api_key
+    GOOGLE_API_KEY=your_google_api_key
+    HUGGINGFACEHUB_API_TOKEN=your_huggingfacehub_api_token
+    HF_TOKEN=your_hf_token
+    LANGCHAIN_API_KEY=your_langchain_api_key
+    MISTRAL_API_KEY=your_mistral_api_key
+    TOGETHER_API_KEY=your_together_api_key
+    ANTHROPIC_API_KEY=your_anthropic_api_key
+    OPENWEATHERMAP_API_KEY=your_openweathermap_api_key
+    OMDB_API_KEY=your_omdb_api_key
+    TMDB_API_KEY=your_tmdb_api_key
+
+   ```
+
+4. **Run the application**:
+   Use Poetry to run the FastAPI application with Uvicorn, enabling hot reloading.
+   ```sh
+   poetry run africhain
+   ```
+
+## Usage
+
+You can interact with the agent using Postman. Send a POST request to `http://0.0.0.0:8000/query` with a JSON body containing your query.
+
+## Deployment
+
+The project is deployed on render as a service [here](url)
