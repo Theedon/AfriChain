@@ -6,7 +6,15 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 @tool
 def query_db(question: str) -> str:
-    """query the database"""
+    """
+    Executes a SQL query against a SQLite database and returns the result as a string.
+
+    Args:
+        question (str): The SQL query to execute.
+
+    Returns:
+        str: The result of the SQL query.
+    """
     db = SQLDatabase.from_uri("sqlite:///data/northwind.db")
     llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.1)
 

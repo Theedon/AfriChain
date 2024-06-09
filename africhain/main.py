@@ -1,23 +1,23 @@
 import os
 
-from langchain import hub
-from langchain.agents import AgentExecutor, create_tool_calling_agent
+import uvicorn
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
 from langchain_anthropic import ChatAnthropic
-from langchain_community.utilities import SQLDatabase
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain_core.tools import tool
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_mistralai.chat_models import ChatMistralAI
-from langchain_openai import ChatOpenAI
 
-from africhain.utils.ip import get_ip_info
-from africhain.utils.movie import get_movie_info
-from africhain.utils.pokemon import get_pokemon_info
-from africhain.utils.weather import get_weather
-from africhain.utils.web_search import search_internet
+# from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_mistralai.chat_models import ChatMistralAI
+# from langchain_openai import ChatOpenAI
+from africhain.models.QueryRequest import QueryRequest
+from africhain.tools.ip import get_ip_info
+from africhain.tools.movie import get_movie_info
+from africhain.tools.pokemon import get_pokemon_info
+from africhain.tools.query_db import query_db
+from africhain.tools.weather import get_weather
+from africhain.tools.web_search import search_internet
+from africhain.utils.agent import build_agent
 
-# from africhain.query_db import query_db
+load_dotenv()
 
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.getenv("HUGGINGFACEHUB_API_TOKEN")
@@ -40,17 +40,8 @@ def main():
 
     llm = ChatAnthropic(model="claude-3-sonnet-20240229")
 
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", "you're a helpful assistant"),
-            ("human", "{input}"),
-            ("placeholder", "{agent_scratchpad}"),
-        ]
-    )
-
-    prompt = hub.pull("hwchase17/openai-tools-agent")
-
     tools = [
+        query_db,
         search_internet,
         get_weather,
         get_ip_info,
@@ -58,13 +49,24 @@ def main():
         get_movie_info,
     ]
 
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    agent_executor.invoke(
-        {
-            "input": "what was the release date of the godfather 2 movie and was it very interesting"
-        },
-    )
+    agent_executor = build_agent(llm, tools)
+
+    app = FastAPI()
+
+    @app.get("/")
+    async def root():
+        return {"message": "Welcome to the Africhain API"}
+
+    @app.post("/query")
+    async def query_agent(request: QueryRequest):
+        try:
+            response = agent_executor.invoke({"input": request.query})
+            return {"response": response["output"]}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    os.environ["UVICORN_RELOADER"] = "watchdog"
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 if __name__ == "__main__":
