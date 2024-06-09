@@ -13,6 +13,7 @@ from langchain_openai import ChatOpenAI
 
 from africhain.utils.get_ip_info import get_ip_info
 from africhain.utils.get_weather import get_weather
+from africhain.utils.pokemon import get_pokemon_info
 from africhain.utils.search_internet import search_internet
 
 # from africhain.query_db import query_db
@@ -48,12 +49,12 @@ def main():
 
     prompt = hub.pull("hwchase17/openai-tools-agent")
 
-    tools = [search_internet, get_weather, get_ip_info]
+    tools = [search_internet, get_weather, get_ip_info, get_pokemon_info]
 
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     agent_executor.invoke(
-        {"input": "what are the information of the ip address 102.88.68.222"},
+        {"input": "tell me all about the snorlax pokemon specie"},
     )
 
 
