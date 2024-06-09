@@ -1,15 +1,15 @@
 from langchain_community.utilities import SQLDatabase
 
-from africhain.query_db import query_db, question_to_query
+from africhain.query_db import query_db
 
 db = SQLDatabase.from_uri("sqlite:///data/northwind.db")
 
 
 def main():
 
-    question = "how many territories do we have in total"
-    query = question_to_query(question, db)
-    print(query_db(query, db))
+    question = "list the employee names for me descending order"
+    result = query_db(question, db)
+    print(result)
 
 
 if __name__ == "__main__":

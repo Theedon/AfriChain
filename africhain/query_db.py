@@ -1,27 +1,29 @@
 import os
 
-from langchain.chains import create_sql_query_chain
+from langchain_community.agent_toolkits import create_sql_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from africhain.utils.replace_md import unmark
+# from langchain_huggingface import HuggingFaceEndpoint
 
-google_api_key = os.getenv("GOOGLE_API_KEY")
-
-
-def query_db(query, db):
-    # print(db.dialect)
-    # print(db.get_usable_table_names)
-
-    result = db.run(query)
-    return result
+os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+os.environ["HF_TOKEN"] = os.getenv("HF_TOKEN")
 
 
-def question_to_query(question: str, db):
+def query_db(question: str, db):
+    # llm = HuggingFaceEndpoint(
+    #     max_new_tokens=512,
+    #     repo_id="google/gemma-7b",
+    #     temperature=0.7,
+    # )
+
     llm = ChatGoogleGenerativeAI(
-        model="gemini-pro", temperature=0.1, google_api_key=google_api_key
+        model="gemini-pro",
+        temperature=0.1,
     )
-    chain = create_sql_query_chain(llm, db)
-    response = chain.invoke({"question": f"{question}"})
-    clean_response = unmark(response)
 
-    return clean_response
+    agent_executor = create_sql_agent(llm, db=db, verbose=True)
+    response = agent_executor.invoke(input={"input": question})
+
+    answer = response["output"]
+    return answer
