@@ -11,7 +11,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import ChatOpenAI
 
-from africhain.apis import integrate_search
+from africhain.utils.get_weather import get_weather
+from africhain.utils.search_internet import search_internet
 
 # from africhain.query_db import query_db
 
@@ -46,12 +47,12 @@ def main():
 
     prompt = hub.pull("hwchase17/openai-tools-agent")
 
-    tools = [integrate_search]
+    tools = [search_internet, get_weather]
 
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     agent_executor.invoke(
-        {"input": "my name is toyin, convert it to nadada"},
+        {"input": "what will the weather be in lagos tomorrow"},
     )
 
 

@@ -23,6 +23,7 @@ langchain-google-genai = "^1.0.6"
 langchain-mistralai = "^0.1.8"
 langchainhub = "^0.1.18"
 langchain-anthropic = "^0.1.15"
+google-cloud-translate = "2.0.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
