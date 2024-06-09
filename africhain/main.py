@@ -1,6 +1,7 @@
 import os
 
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from langchain_anthropic import ChatAnthropic
 
@@ -15,6 +16,8 @@ from africhain.tools.query_db import query_db
 from africhain.tools.weather import get_weather
 from africhain.tools.web_search import search_internet
 from africhain.utils.agent import build_agent
+
+load_dotenv()
 
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.getenv("HUGGINGFACEHUB_API_TOKEN")
