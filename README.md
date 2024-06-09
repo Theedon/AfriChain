@@ -1,5 +1,3 @@
-Sure! Here's a markdown README file for your GitHub project:
-
 # LangChain Agent for African AI Foundation Recruitment
 
 This project implements a Python-based LangChain agent that utilizes various tools to provide information based on natural language queries. The agent is exposed over a single FastAPI endpoint and can be interacted with using Postman.
