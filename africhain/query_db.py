@@ -1,28 +1,29 @@
-from langchain.chains import create_sql_query_chain
-from langchain_community.utilities import SQLDatabase
-from langchain_huggingface import HuggingFaceEndpoint
+import os
 
-db = SQLDatabase.from_uri("sqlite:///data/northwind.db")
+from langchain_community.agent_toolkits import create_sql_agent
+from langchain_google_genai import ChatGoogleGenerativeAI
 
+# from langchain_huggingface import HuggingFaceEndpoint
 
-def query_db(query):
-    print(db)
-    print(db.dialect)
-    print(db.get_usable_table_names)
-
-    result = db.run(query)
-    print(result)
-    return result
+os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+os.environ["HF_TOKEN"] = os.getenv("HF_TOKEN")
 
 
-def question_to_query(question: str):
-    llm = HuggingFaceEndpoint(
-        repo_id="HuggingFaceH4/zephyr-7b-beta",
-        model_kwargs={"temperature": 0.5, "max_length": 64, "max_new_tokens": 512},
+def query_db(question: str, db):
+    # llm = HuggingFaceEndpoint(
+    #     max_new_tokens=512,
+    #     repo_id="google/gemma-7b",
+    #     temperature=0.7,
+    # )
+
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-pro",
+        temperature=0.1,
     )
 
-    chain = create_sql_query_chain(llm, db)
-    response = chain.invoke({"question": "How many customers are there"})
-    # print(response)
+    agent_executor = create_sql_agent(llm, db=db, verbose=True)
+    response = agent_executor.invoke(input={"input": question})
 
-    return response
+    answer = response["output"]
+    return answer
