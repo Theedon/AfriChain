@@ -11,13 +11,12 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import ChatOpenAI
 
-from africhain.utils.ip import get_ip_info
-from africhain.utils.movie import get_movie_info
-from africhain.utils.pokemon import get_pokemon_info
-from africhain.utils.weather import get_weather
-from africhain.utils.web_search import search_internet
-
-# from africhain.query_db import query_db
+from africhain.tools.ip import get_ip_info
+from africhain.tools.movie import get_movie_info
+from africhain.tools.pokemon import get_pokemon_info
+from africhain.tools.query_db import query_db
+from africhain.tools.weather import get_weather
+from africhain.tools.web_search import search_internet
 
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.getenv("HUGGINGFACEHUB_API_TOKEN")
@@ -51,6 +50,7 @@ def main():
     prompt = hub.pull("hwchase17/openai-tools-agent")
 
     tools = [
+        query_db,
         search_internet,
         get_weather,
         get_ip_info,
@@ -60,10 +60,8 @@ def main():
 
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    agent_executor.invoke(
-        {
-            "input": "what was the release date of the godfather 2 movie and was it very interesting"
-        },
+    result = agent_executor.invoke(
+        {"input": "how many employees do we have"},
     )
 
 
