@@ -83,6 +83,7 @@ POST /query
     OPENWEATHERMAP_API_KEY=your_openweathermap_api_key
     OMDB_API_KEY=your_omdb_api_key
     TMDB_API_KEY=your_tmdb_api_key
+    TAVILY_API_KEY=your_tavily_api_key
 
    ```
 
@@ -98,4 +99,4 @@ You can interact with the agent using Postman. Send a POST request to `http://0.
 
 ## Deployment
 
-The project is deployed on render as a service [here](url)
+The project is deployed on render as a service at [this url](https://africhain.onrender.com)
