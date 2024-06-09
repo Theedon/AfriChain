@@ -12,6 +12,7 @@ from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_openai import ChatOpenAI
 
 from africhain.utils.ip import get_ip_info
+from africhain.utils.movie import get_movie_info
 from africhain.utils.pokemon import get_pokemon_info
 from africhain.utils.weather import get_weather
 from africhain.utils.web_search import search_internet
@@ -49,12 +50,20 @@ def main():
 
     prompt = hub.pull("hwchase17/openai-tools-agent")
 
-    tools = [search_internet, get_weather, get_ip_info, get_pokemon_info]
+    tools = [
+        search_internet,
+        get_weather,
+        get_ip_info,
+        get_pokemon_info,
+        get_movie_info,
+    ]
 
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
     agent_executor.invoke(
-        {"input": "tell me all about the snorlax pokemon specie"},
+        {
+            "input": "what was the release date of the godfather 2 movie and was it very interesting"
+        },
     )
 
 
