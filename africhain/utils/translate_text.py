@@ -8,12 +8,16 @@ os.environ["OPENWEATHERMAP_API_KEY"] = os.getenv("OPENWEATHERMAP_API_KEY")
 
 @tool
 def translate_text(target: str, text: str) -> dict:
-    """Translates text into the target language.
-
-    Target must be an ISO 639-1 language code.
-    See https://g.co/cloud/translate/v2/translate-reference#supported_languages
     """
+    Translates the given text to the specified target language using the Google Cloud Translate API.
 
+    Args:
+        target (str): The target language to translate the text to.
+        text (str): The text to be translated.
+
+    Returns:
+        dict: A dictionary containing the translated text, the detected source language, and other relevant information.
+    """
     translate_client = translate.Client()
 
     if isinstance(text, bytes):
